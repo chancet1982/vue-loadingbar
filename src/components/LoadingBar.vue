@@ -17,7 +17,7 @@ export default {
   	  required: false,
   	  default: "1em",
     },
-	progress: {
+	progress: { //TODO ensure that this is only being used if loading-bar type is determined
   	  type: Number,
   	  required: false,
   	  default: 50,
@@ -32,15 +32,27 @@ export default {
   	  required: false,
   	  default: false,
     },
-	color: {
+	color: { //TODO consider parsing valid and invalid styles using regex
 		type: String,
 		required: false,
 		default: 'rgb(205, 27, 106)',
+	},
+	loading: {
+		type: Boolean,
+		required: false,
+		default: true // temp while developing
 	}
   },
   computed: {
 	  computedPosition () {
 		this.position === "top" ? 'top' : 'bottom';
+	  },
+	  isLoading(){
+		  const payload = {
+			  loading: this.loading
+		  };
+		  this.$emit("loading-bar-state-change", payload);
+		  this.loading ? this.$emit("loading-bar-loading") : this.$emit("loading-bar-not-loading");
 	  },
   },
   data () {

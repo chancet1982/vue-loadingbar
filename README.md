@@ -1,6 +1,25 @@
 # vue-loadingbar
 
-> A Vue.js project
+> A Vue.js loading-bar component
+
+## Props:
+* cssClasses: type: String, required: false
+* size: type: String, required: false, default: "1em"
+* progress: type: Number, required: false, default: 50,
+* posBottom: type: Boolean, required: false, default: false,
+* determined: type: Boolean, required: false, default: false,
+* color: type: String, required: false, default: 'rgb(205, 27, 106)',
+* loading: type: Boolean, required: false, default: true // temp while developing
+
+## Events:
+### loading-bar-state-change
+This event is fired whenever loader state (loading/ not loading) is changed.
+
+### loading-bar-loading
+This event is fired when loader is loading.
+
+### loading-bar-not-loading
+This event is fired when loader is not loading.
 
 ## Build Setup
 
