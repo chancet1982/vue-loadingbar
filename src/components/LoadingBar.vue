@@ -47,12 +47,21 @@ export default {
 	  computedPosition () {
 		this.position === "top" ? 'top' : 'bottom';
 	  },
-	  isLoading(){
+	  progressBarStyle () {
+		return {
+	  		  'width': this.progress + '%',
+	  		  'color': this.color,
+		}
+	  },
+  },
+  methods: {
+	  isLoading () {
+		  const loadingState = this.loading;
 		  const payload = {
-			  loading: this.loading
+			  loading: loadingState
 		  };
 		  this.$emit("loading-bar-state-change", payload);
-		  this.loading ? this.$emit("loading-bar-loading") : this.$emit("loading-bar-not-loading");
+		  loadingState ? this.$emit("loading-bar-loading") : this.$emit("loading-bar-not-loading");
 	  },
   },
   data () {
@@ -63,10 +72,8 @@ export default {
 		  'font-size': this.size,
 		  'line-height': this.size,
 		  'height': this.size,
-	  },
-	  progressBarStyle: {
-		  'width': this.progress + "%",
-		  'color': this.color,
+		  'background-color': 'rgb(152, 165, 166)',
+		  'border-radius': 5 + 'px',
 	  },
     }
   }
@@ -76,9 +83,11 @@ export default {
 <style lang="scss" scoped>
 
 .loading-bar {
-	/*position: absolute;
-	width: 100%;*/
-	background-color: rgb(152, 165, 166);
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	overflow: hidden;
 	&.position-top {
 		top: 0px;
 	}
@@ -88,26 +97,60 @@ export default {
 	.loading-bar-progress {
 		position: relative;
 		height: 100%;
-		background-color: rgb(205, 27, 106);
-		&:after {
-			content: '';
-			position: absolute;
-			top: 0;
-			left: 50%;
-			margin-left: -10%;
-			width: 20%;
-			height:100%;
-			background-color: rgb(152, 165, 166);
-		}
+		width: 50%;
+		background-color: rgba(23, 182, 194, 0.2);
 	}
 	&.determined {
-		text-align: left;
+		top: 0%;
+		left: 0%;
+
 	}
 	&.undetermined {
-		text-align: center;
 		.loading-bar-progress {
+			top: 0%;
 			margin: 0 auto;
+			animation: scaling 2s ease-in-out infinite alternate ;
+			-webkit-animation: scaling 2s ease-in-out infinite alternate ;
+			&:before,
+			&:after {
+				content: '';
+				position: absolute;
+				top: 0;
+				width: 50%;
+				height:100%;
+				background-color: rgba(23, 182, 194, 1);
+				animation: opacity 2s ease-in-out infinite alternate ;
+				-webkit-animation: opacity 2s ease-in-out infinite alternate ;
+			}
+			&:before {
+				left: 0%;
+				transform: translateX(-100%);
+
+			}
+			&:after {
+				right: 0%;
+				transform: translateX(100%);
+			}
 		}
 	}
+}
+@keyframes opacity {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes scaling {
+    0% {
+    	opacity: 0;
+        transform: scale(0, 1)  ;
+    }
+    100% {
+    	opacity: 1;
+        transform: scale(1, 1) ;
+    }
 }
 </style>
