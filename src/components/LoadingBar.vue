@@ -96,7 +96,7 @@ export default {
 	  startLoading () {
 		this.loadingData = true;
 		this.progressData = 0;
-		const progressAway = () => {
+		const incrementOrFinishLoading = () => {
 			if (this.progressData < 100) {
 				this.incProgress(10);
 			} else {
@@ -104,7 +104,7 @@ export default {
 				this.finishLoading();
 			}
 		}
-		const fauxProgress = setInterval( progressAway, 100);
+		const fauxProgress = setInterval( incrementOrFinishLoading, 100);
 	  },
 	  incProgress(step) {
 		  this.progressData += step;
@@ -116,11 +116,26 @@ export default {
 		}, this.finishedDelay);
 	  },
 	  getData () {
-		  //this.startLoading();
-		  axios.get("http://www.reddit.com/r/pics.json").then((response) => {
+		//this.startLoading();
+		axios.get("http://www.reddit.com/r/pics.json", {
+			onUploadProgress: (progressEvent) => {
+				const totalLength = progressEvent.lengthComputable ? progressEvent.total : progressEvent.target.getResponseHeader('content-length') || progressEvent.target.getResponseHeader('x-decompressed-content-length');
+				console.log("onUploadProgress", totalLength);
+				if (totalLength !== null) {
+					this.progressData = Math.round( (progressEvent.loaded * 100) / totalLength );
+				}
+			},
+			onDownloadProgress: (progressEvent) => {
+				const totalLength = progressEvent.lengthComputable ? progressEvent.total : progressEvent.target.getResponseHeader('content-length') || progressEvent.target.getResponseHeader('x-decompressed-content-length');
+				console.log("onDownloadProgress", totalLength);
+				if (totalLength !== null) {
+					this.progressData = Math.round( (progressEvent.loaded * 100) / totalLength );
+				}
+			},
+		}).then((response) => {
 			console.log(response);
 			//this.finishLoading();
-		  });
+		});
 	  }
   },
   data () {
@@ -132,7 +147,6 @@ export default {
 		  'font-size': this.size,
 		  'line-height': this.size,
 		  'height': this.size,
-		  'background-color': 'rgb(152, 165, 166)',
 	  },
     }
   }
@@ -150,6 +164,8 @@ export default {
 	opacity: 0;
 	-webkit-transition: opacity 300ms 1000ms linear ;
 	transition: opacity 300ms 1000ms linear ;
+	background-color: rgba( 255,255,255,0.2);
+	box-shadow: 0 2px 4px rgba (0,0,0,0.2);
 	&.loading {
 		opacity: 1;
 	}
